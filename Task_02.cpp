@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#define PI 3.141592653589793
 using namespace std;
 
 void printCanvas(vector<string> &canvas) {
@@ -48,19 +47,28 @@ void drawKoch(vector<pair<double, double>> &points, double x1, double y1, double
     double dy = (y2 - y1) / 3;
     double x3 = x1 + dx, y3 = y1 + dy;
     double x4 = x1 + 2 * dx, y4 = y1 + 2 * dy;
-    double x5 = x3 + (dx * cos(PI / 3) - dy * sin(PI / 3));
-    double y5 = y3 + (dx * sin(PI / 3) + dy * cos(PI / 3));
+    double angle = M_PI / 3;
+    double x5 = x3 + (dx * cos(angle) - dy * sin(angle));
+    double y5 = y3 + (dx * sin(angle) + dy * cos(angle));
     drawKoch(points, x1, y1, x3, y3, depth - 1);
     drawKoch(points, x3, y3, x5, y5, depth - 1);
     drawKoch(points, x5, y5, x4, y4, depth - 1);
     drawKoch(points, x4, y4, x2, y2, depth - 1);
 }
 
-void printKochSnowflake(int depth) {
+void printKochSnowflakeASCII(int depth) {
+    const int width = 100, height = 40;
+    vector<string> canvas(height, string(width, ' '));
     vector<pair<double, double>> points;
-    drawKoch(points, 0, 0, 100, 0, depth);
-    for (auto &p : points)
-        cout << "(" << p.first << ", " << p.second << ")\n";
+
+    drawKoch(points, 10, height/2, width-10, height/2, depth);
+    for (auto &p : points) {
+        int x = round(p.first);
+        int y = round(p.second);
+        if (x >= 0 && x < width && y >= 0 && y < height)
+            canvas[y][x] = '*';
+    }
+    printCanvas(canvas);
 }
 
 int main() {
@@ -69,17 +77,18 @@ int main() {
     cout << "Choose Fractal Type:\n";
     cout << "1. Recursive Tree\n2. Sierpinski Triangle\n3. Koch Snowflake\n";
     int choice; cin >> choice;
+
     switch(choice) {
         case 1:
-            drawTree(canvas, width/2, height-1, 10, 5);
+            drawTree(canvas, width/2, height-1, 8, 4);
             printCanvas(canvas);
             break;
         case 2:
-            drawSierpinski(canvas, width/2, 0, 20, 4);
+            drawSierpinski(canvas, width/2, 0, 16, 3);
             printCanvas(canvas);
             break;
         case 3:
-            printKochSnowflake(3);
+            printKochSnowflakeASCII(3);
             break;
         default:
             cout << "Invalid choice.\n";
